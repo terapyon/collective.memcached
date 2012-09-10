@@ -3,8 +3,6 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.memcached">
 
-    <configure zcml:condition="installed plone.app.registry">
-        <utility factory=".utility.MemcachedCacheChooser" />
-    </configure>
+    <utility factory=".utility.MemcachedCacheChooser" />
 
 </configure>
