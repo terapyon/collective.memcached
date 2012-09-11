@@ -9,6 +9,7 @@ from threading import local
 from zope.component import getUtility, queryUtility
 from zope.interface import implements
 from zope.ramcache.interfaces.ram import IRAMCache
+from zope.component.interfaces import ComponentLookupError
 from plone.registry.interfaces import IRegistry
 from plone.memoize.interfaces import ICacheChooser
 from plone.memoize import ram
@@ -65,13 +66,17 @@ class MemcachedCacheChooser(object):
         connection = getattr(self._v_thread_local, 'connection', None)
 
         if connection is None:
-            registry = getUtility(IRegistry)
+            try:
+                registry = getUtility(IRegistry)
+            except ComponentLookupError:
+                logger.info("Can't have IRegistry")
+                return None
             try:
                 settings = registry.forInterface(IMemcachedControlPanel)
                 connection = memcache.Client(settings.memcached_hosts)
             except KeyError:
                 logger.info("Can't create memcache connection")
-            finally:
+            else:
                 logger.info("Creating new memcache connection")
                 self._v_thread_local.connection = connection
 
