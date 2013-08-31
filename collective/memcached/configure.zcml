@@ -15,6 +15,12 @@
     provides="collective.memcached.interfaces.IMemcachedClient"
     factory=".utility.MemcachedClient" />
 
+  <subscriber
+         zcml:condition="installed plone.registry"
+         for="plone.registry.interfaces.IRecordModifiedEvent"
+         handler=".controlpanel.connection_setting_update"
+            />
+
   <browser:page
     name="memcached-settings"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"

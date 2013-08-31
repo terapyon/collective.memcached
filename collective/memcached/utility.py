@@ -10,6 +10,7 @@ from zope.component import getUtility, queryUtility
 from zope.interface import implements
 from zope.ramcache.interfaces.ram import IRAMCache
 from zope.component.interfaces import ComponentLookupError
+from zope.component import adapts
 from plone.registry.interfaces import IRegistry
 from plone.memoize.interfaces import ICacheChooser
 from plone.memoize import ram
@@ -17,7 +18,6 @@ from collective.memcached.interfaces import IMemcachedControlPanel
 
 
 logger = logging.getLogger("Plone")
-
 
 class MemcachedClient(object):
     """Memcached client."""
@@ -44,10 +44,12 @@ class MemcachedClient(object):
         registry = getUtility(IRegistry)
         return registry.forInterface(IMemcachedControlPanel)
 
+
 class MemcachedCacheChooser(object):
     """"""
     implements(ICacheChooser)
     _v_thread_local = local()
+    connection_setting_number = 0
 
     def __call__(self, fun_name):
         """
@@ -63,7 +65,11 @@ class MemcachedCacheChooser(object):
     def getClient(self):
         """Return thread local connection to memcached.
         """
+        connection_number = getattr(self._v_thread_local, 'connection_number', 0)
         connection = getattr(self._v_thread_local, 'connection', None)
+        if connection_number < self.connection_setting_number and \
+                        connection is not None:
+            connection = None
 
         if connection is None:
             try:
@@ -74,11 +80,12 @@ class MemcachedCacheChooser(object):
             try:
                 settings = registry.forInterface(IMemcachedControlPanel)
                 connection = memcache.Client(settings.memcached_hosts)
-            except KeyError:
+            except (KeyError, TypeError):
                 logger.info("Can't create memcache connection")
             else:
                 logger.info("Creating new memcache connection")
                 self._v_thread_local.connection = connection
+                self._v_thread_local.connection_number = self.connection_setting_number
 
         return connection
 
