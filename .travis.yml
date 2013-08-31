@@ -8,7 +8,7 @@ install:
   - mkdir -p buildout-cache/eggs
   - mkdir -p buildout-cache/downloads
   - sed -ie "s#travis-4.3.x.cfg#travis-$PLONE_VERSION.x.cfg#" buildout.cfg
-  - python bootstrap.py -d
+  - python bootstrap.py
   - bin/buildout -c buildout.cfg -q
 script:
 #  - bin/flake8 setup.py
