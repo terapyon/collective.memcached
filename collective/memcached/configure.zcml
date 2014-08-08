@@ -17,7 +17,8 @@
 
   <subscriber
          zcml:condition="installed plone.registry"
-         for="plone.registry.interfaces.IRecordModifiedEvent"
+         for="collective.memcached.interfaces.IMemcachedControlPanel
+              plone.registry.interfaces.IRecordModifiedEvent"
          handler=".controlpanel.connection_setting_update"
             />
 

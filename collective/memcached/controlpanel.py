@@ -25,7 +25,7 @@ class MemcachedControlPanel(controlpanel.ControlPanelFormWrapper):
     form = MemcachedControlPanelForm
 
 
-def connection_setting_update(event):
+def connection_setting_update(settings, event):
     if IRecordModifiedEvent.providedBy(event):
         # Memcached control panel setting changed
         if event.record.fieldName == 'memcached_hosts':
