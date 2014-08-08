@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2 (unreleased)
+-------------------
+
+- Adding event for IRecordModifiedEvent [terapyon]
+
 0.1 (unreleased)
 ----------------
 
