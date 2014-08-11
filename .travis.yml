@@ -1,5 +1,7 @@
 language: python
 python: "2.7"
+services:
+    - memcached
 install:
 - virtualenv test-env --no-setuptools
 - mkdir -p buildout-cache/downloads
